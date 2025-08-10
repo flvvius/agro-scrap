@@ -1,27 +1,35 @@
 import { db } from "./index";
 import { offers } from "./schema";
+import { type OfferInput } from "~/lib/types";
 
-export type OfferInput = {
-  title: string;
-  cerealType: string;
-  price: number;
-  quantity: string;
-  region: string;
-  contact: string;
-  source: string;
-};
 
 export async function upsertOffers(items: OfferInput[]) {
-  await db.insert(offers).values(
-    items.map((o) => ({
-      title: o.title,
-      cerealType: o.cerealType,
-      price: o.price.toString(),
-      quantity: o.quantity,
-      region: o.region,
-      contact: o.contact,
-      source: o.source,
-      scrapedAt: new Date(),
-    })),
-  );
+  for (const item of items) {
+    await db
+      .insert(offers)
+      .values({
+        title: item.title,
+        cerealType: item.cerealType,
+        price: item.price.toString(),
+        quantity: item.quantity,
+        region: item.region,
+        contact: item.contact,
+        source: item.source,
+        url: item.url,
+        scrapedAt: new Date(),
+      })
+      .onConflictDoUpdate({
+        target: offers.url,
+        set: {
+          title: item.title,
+          cerealType: item.cerealType,
+          price: item.price.toString(),
+          quantity: item.quantity,
+          region: item.region,
+          contact: item.contact,
+          source: item.source,
+          scrapedAt: new Date(),
+        },
+      });
+  }
 }

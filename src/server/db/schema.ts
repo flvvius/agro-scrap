@@ -2,7 +2,7 @@
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
 import { sql } from "drizzle-orm";
-import { index, pgTableCreator } from "drizzle-orm/pg-core";
+import { index, pgTableCreator, uniqueIndex } from "drizzle-orm/pg-core";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -37,6 +37,7 @@ export const offers = createTable(
     region: d.text("region").notNull(),
     contact: d.text("contact").notNull(),
     source: d.text("source").notNull(),
+    url: d.text("url").notNull(),
     scrapedAt: d
       .timestamp("scraped_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
@@ -46,5 +47,7 @@ export const offers = createTable(
     index("offer_cereal_type_idx").on(t.cerealType),
     index("offer_price_idx").on(t.price),
     index("offer_scraped_at_idx").on(t.scrapedAt),
+    // Add unique constraint to prevent duplicates based on URL
+    uniqueIndex("offer_url_unique_idx").on(t.url),
   ],
 );

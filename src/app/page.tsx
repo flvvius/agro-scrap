@@ -2,15 +2,10 @@
 
 import { useState } from "react";
 import { api } from "~/trpc/react";
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
 import { Loader } from "lucide-react";
+import Section from "./_components/section";
+import CerealSelection from "./_components/cerealSelection";
+
 export default function Home() {
   const [cerealType, setCerealType] = useState("wheat");
   const latest = api.offers.getLatest.useQuery({ limit: 10 });
@@ -21,78 +16,37 @@ export default function Home() {
 
   if (latest.isLoading || lowest.isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <Loader className="h-10 w-10 animate-spin" />
+      <div className="flex h-screen items-center justify-center bg-yellow-50">
+        <Loader className="h-12 w-12 animate-spin text-yellow-700" />
       </div>
     );
   }
+
   if (latest.error || lowest.error || !lowest.data || !latest.data) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <p className="text-lg text-red-600">Error loading offers.</p>
+      <div className="flex h-screen items-center justify-center bg-yellow-50">
+        <p className="rounded-lg bg-red-100 px-6 py-4 text-2xl font-bold text-red-700 shadow">
+          Eroare la încărcarea ofertelor.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-6">
-      <div className="mx-auto w-full max-w-lg space-y-6">
-        <h1 className="text-center text-3xl font-bold">
-          Cereal Price Dashboard
+    <div className="min-h-screen bg-gradient-to-b from-yellow-100 to-yellow-50 px-4 py-6">
+      <div className="mx-auto w-full max-w-4xl space-y-8">
+        <h1 className="rounded-lg bg-yellow-200 px-4 py-3 text-center text-4xl font-extrabold text-yellow-900 shadow">
+          Panou Prețuri Cereale
         </h1>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Select Cereal</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Select value={cerealType} onValueChange={setCerealType}>
-              <SelectTrigger>
-                <SelectValue placeholder="Choose cereal" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="wheat">Wheat</SelectItem>
-                <SelectItem value="corn">Corn</SelectItem>
-                <SelectItem value="barley">Barley</SelectItem>
-              </SelectContent>
-            </Select>
-          </CardContent>
-        </Card>
+        <CerealSelection
+          cerealType={cerealType}
+          setCerealType={setCerealType}
+        />
 
-        <section>
-          <h2 className="mb-2 text-2xl font-semibold">Lowest Prices</h2>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {lowest.data.map((o) => (
-              <Card key={o.id} className="bg-white">
-                <CardHeader>
-                  <CardTitle className="text-xl">{o.price} lei/kg</CardTitle>
-                </CardHeader>
-                <CardContent className="text-sm text-gray-600">
-                  {o.region} • {o.contact}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
+        <Section offers={lowest.data} title="💰 Cele mai mici prețuri" />
 
-        <section>
-          <h2 className="mb-2 text-2xl font-semibold">Latest Offers</h2>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            {latest.data.map((o) => (
-              <Card key={o.id} className="bg-white">
-                <CardHeader>
-                  <CardTitle className="text-base">
-                    {new Date(o.scrapedAt).toLocaleDateString()}{" "}
-                    {new Date(o.scrapedAt).toLocaleTimeString()}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="text-sm text-gray-600">
-                  {o.cerealType} • {o.price} lei/kg • {o.region}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
+        <Section offers={latest.data} title="🆕 Oferte recente" />
       </div>
     </div>
   );

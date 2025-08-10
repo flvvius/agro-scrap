@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "offer_url_unique_idx" ON "agro-scrap_offer" USING btree ("url");
