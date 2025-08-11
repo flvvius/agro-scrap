@@ -1,36 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { api } from "~/trpc/react";
-import { Loader } from "lucide-react";
-import Section from "./_components/section";
+import { Suspense, useState } from "react";
 import CerealSelection from "./_components/cerealSelection";
+import LoadingBlock from "./_components/loadingBlock";
+import LowestSection from "./_components/LowestSection";
+import LatestSection from "./_components/LatestSection";
 
 export default function Home() {
   const [cerealType, setCerealType] = useState("wheat");
-  const latest = api.offers.getLatest.useQuery({ limit: 10 });
-  const lowest = api.offers.getLowest.useQuery({
-    cerealType,
-    limit: 10,
-  });
-
-  if (latest.isLoading || lowest.isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-yellow-50">
-        <Loader className="h-12 w-12 animate-spin text-yellow-700" />
-      </div>
-    );
-  }
-
-  if (latest.error || lowest.error || !lowest.data || !latest.data) {
-    return (
-      <div className="flex h-screen items-center justify-center bg-yellow-50">
-        <p className="rounded-lg bg-red-100 px-6 py-4 text-2xl font-bold text-red-700 shadow">
-          Eroare la încărcarea ofertelor.
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-yellow-100 to-yellow-50 px-4 py-6">
@@ -44,9 +21,15 @@ export default function Home() {
           setCerealType={setCerealType}
         />
 
-        <Section offers={lowest.data} title="💰 Cele mai mici prețuri" />
+        <Suspense
+          fallback={<LoadingBlock text="Se încarcă cele mai mici prețuri" />}
+        >
+          <LowestSection cerealType={cerealType} />
+        </Suspense>
 
-        <Section offers={latest.data} title="🆕 Oferte recente" />
+        <Suspense fallback={<LoadingBlock text="Se încarcă ultimele oferte" />}>
+          <LatestSection />
+        </Suspense>
       </div>
     </div>
   );
