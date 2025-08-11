@@ -1,17 +1,10 @@
-import { api } from "~/trpc/react";
+import { api } from "~/trpc/server";
 import Section from "./section";
 
-export default function LatestSection() {
-  const latest = api.offers.getLatest.useQuery(
-    {
-      limit: 10,
-    },
-    { suspense: true },
-  );
+export default async function LatestSection() {
+  const latest = await api.offers.getLatest({
+    limit: 10,
+  });
 
-  if (latest.error) {
-    return <div>Eroare la incarcarea ofertelor!</div>;
-  }
-
-  return <Section offers={latest.data!} title="Ultimele oferte" />;
+  return <Section offers={latest} title="Ultimele oferte" />;
 }

@@ -1,7 +1,11 @@
+"use client";
+
 import { api } from "~/trpc/react";
 import Section from "./section";
+import { useCerealStore } from "../store/cerealStore";
 
-export default function LowestSection({ cerealType }: { cerealType: string }) {
+export default function LowestSection() {
+  const { cerealType } = useCerealStore();
   const lowest = api.offers.getLowest.useQuery(
     {
       cerealType,

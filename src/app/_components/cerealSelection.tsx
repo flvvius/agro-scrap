@@ -1,3 +1,5 @@
+"use client";
+
 import { Card, CardTitle, CardHeader, CardContent } from "~/components/ui/card";
 import {
   Select,
@@ -6,9 +8,9 @@ import {
   SelectValue,
   SelectContent,
 } from "~/components/ui/select";
-import { Wheat, Sprout } from "lucide-react"; // ✅ existing icons
+import { Wheat, Sprout } from "lucide-react";
+import { useCerealStore } from "../store/cerealStore";
 
-// Custom Corn icon as a React component
 function CornIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -33,15 +35,8 @@ function CornIcon({ className }: { className?: string }) {
   );
 }
 
-type CerealSelectionProps = {
-  cerealType: string;
-  setCerealType: (value: string) => void;
-};
-
-export default function CerealSelection({
-  cerealType,
-  setCerealType,
-}: CerealSelectionProps) {
+export default function CerealSelection() {
+  const { cerealType, setCerealType } = useCerealStore();
   return (
     <Card className="rounded-xl border-4 border-yellow-400 bg-gradient-to-b from-yellow-100 to-yellow-50 shadow-lg">
       <CardHeader className="pb-2">

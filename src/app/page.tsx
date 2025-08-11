@@ -1,14 +1,10 @@
-"use client";
-
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 import CerealSelection from "./_components/cerealSelection";
 import LoadingBlock from "./_components/loadingBlock";
 import LowestSection from "./_components/LowestSection";
 import LatestSection from "./_components/LatestSection";
 
 export default function Home() {
-  const [cerealType, setCerealType] = useState("wheat");
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-yellow-100 to-yellow-50 px-4 py-6">
       <div className="mx-auto w-full max-w-4xl space-y-8">
@@ -16,15 +12,12 @@ export default function Home() {
           Panou Prețuri Cereale
         </h1>
 
-        <CerealSelection
-          cerealType={cerealType}
-          setCerealType={setCerealType}
-        />
+        <CerealSelection />
 
         <Suspense
           fallback={<LoadingBlock text="Se încarcă cele mai mici prețuri" />}
         >
-          <LowestSection cerealType={cerealType} />
+          <LowestSection />
         </Suspense>
 
         <Suspense fallback={<LoadingBlock text="Se încarcă ultimele oferte" />}>
